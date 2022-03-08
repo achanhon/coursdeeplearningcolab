@@ -17,8 +17,10 @@ def compute_accuracy(batchprovider, net):
     return nbOK, nb
 
 
-def training_epoch(batchprovider, net, lr, optimizer, criterion):
+def training_epoch(batchprovider, net, lr):
     net.train()
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     meanloss = 0
     nb, nbOK = 0, 0
     for i, (x, y) in enumerate(batchprovider):
@@ -37,10 +39,9 @@ def training_epoch(batchprovider, net, lr, optimizer, criterion):
                 print("loss=", meanloss / 50)
                 meanloss = 0
 
-        loss *= lr
         optimizer.zero_grad()
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(net.parameters(), 10)
+        torch.nn.utils.clip_grad_norm_(net.parameters(), 3)
         optimizer.step()
 
     return nbOK, nb
@@ -75,11 +76,10 @@ testloader = torch.utils.data.DataLoader(
 )
 
 print("finetune the model on the data")
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters(), lr=0.1)
+
 for epoch in range(8):
     print("epoch", epoch)
-    nbOK, nb = training_epoch(trainloader, net, 0.0001, optimizer, criterion)
+    nbOK, nb = training_epoch(trainloader, net, 0.0001)
     print("train accuracy", nbOK / nb)
 
 print("eval model")
