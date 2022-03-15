@@ -1,0 +1,10 @@
+/SPIRO/build/MNIST/processed/test.pt
+/SPIRO/build/MNIST/processed/training.pt
+/SPIRO/build/MNIST/raw/t10k-images-idx3-ubyte
+/SPIRO/build/MNIST/raw/t10k-images-idx3-ubyte.gz
+/SPIRO/build/MNIST/raw/t10k-labels-idx1-ubyte
+/SPIRO/build/MNIST/raw/t10k-labels-idx1-ubyte.gz
+/SPIRO/build/MNIST/raw/train-images-idx3-ubyte
+/SPIRO/build/MNIST/raw/train-images-idx3-ubyte.gz
+/SPIRO/build/MNIST/raw/train-labels-idx1-ubyte
+/SPIRO/build/MNIST/raw/train-labels-idx1-ubyte.gz

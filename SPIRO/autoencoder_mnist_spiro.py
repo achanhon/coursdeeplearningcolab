@@ -8,7 +8,7 @@ def compute_L1(batchprovider, net):
         nb, L1 = 0, 0
         for x, _ in batchprovider:
             x = x.cuda()
-            z = net(x)
+            z, _ = net(x)
 
             L1 += (x - z).abs().sum()
             nb += x.shape[0]
@@ -29,8 +29,8 @@ def training_epoch(batchprovider, net, lr):
 
         with torch.no_grad():
             meanloss += loss.clone().cpu().numpy()
-            L1+=loss.clone().cpu().numpy()
-            nb+=x.shape[0]
+            L1 += loss.clone().cpu().numpy()
+            nb += x.shape[0]
             if i % 50 == 49:
                 print("loss=", meanloss / 50)
                 meanloss = 0
@@ -40,21 +40,21 @@ def training_epoch(batchprovider, net, lr):
         torch.nn.utils.clip_grad_norm_(net.parameters(), 3)
         optimizer.step()
 
-    return L1,nb
+    return L1, nb
 
 
 class MyAutoencoder(torch.nn.Module):
     def __init__(self):
         super(MyAutoencoder, self).__init__()
-        self.conv1 = torch.nn.Conv2d(1, 16,kernel_size=5, padding=2)
-        self.conv2 = torch.nn.Conv2d(16, 64,kernel_size=5, padding=2)
+        self.conv1 = torch.nn.Conv2d(1, 16, kernel_size=5, padding=2)
+        self.conv2 = torch.nn.Conv2d(16, 64, kernel_size=5, padding=2)
         self.l1 = torch.nn.Linear(64 * 7 * 7, 2)
 
         self.d1 = torch.nn.Linear(2, 512)
         self.d2 = torch.nn.Linear(512, 512)
         self.d3 = torch.nn.Linear(512, 7 * 7 * 64)
-        self.convd1 = torch.nn.Conv2d(64, 16,kernel_size=5, padding=2)
-        self.convd2 = torch.nn.Conv2d(16, 1,kernel_size=5, padding=2)
+        self.convd1 = torch.nn.Conv2d(64, 16, kernel_size=5, padding=2)
+        self.convd2 = torch.nn.Conv2d(16, 1, kernel_size=5, padding=2)
 
         self.tmp = torch.nn.AdaptiveAvgPool2d((14, 14))
         self.tmp2 = torch.nn.AdaptiveAvgPool2d((28, 28))
@@ -65,7 +65,7 @@ class MyAutoencoder(torch.nn.Module):
         x = torch.nn.functional.max_pool2d(self.conv2(x), kernel_size=2, stride=2)
         x = x.view(x.shape[0], 64 * 7 * 7)
 
-        code = torch.nn.functional.sigmoid(self.l1(x))
+        code = torch.nn.functional.sigmoid(self.l1(x) * 100)
 
         x = torch.nn.functional.leaky_relu(self.d1(code))
         x = torch.nn.functional.relu(self.d2(x))
@@ -73,7 +73,7 @@ class MyAutoencoder(torch.nn.Module):
         x = x.view(x.shape[0], 64, 7, 7)
 
         x = torch.nn.functional.leaky_relu(self.convd1(self.tmp(x)))
-        x = torch.nn.functional.sigmoid(self.convd2(self.tmp2(x)))
+        x = torch.nn.functional.sigmoid(self.convd2(self.tmp2(x)) * 100)
 
         return x, code
 
@@ -107,7 +107,7 @@ print("train the model on the data")
 
 for epoch in range(8):
     print("epoch", epoch)
-    L1, nb = training_epoch(trainloader, net, 0.0001)
+    L1, nb = training_epoch(trainloader, net, 0.00001)
     print("train L1", L1 / nb)
 
 print("eval model")
