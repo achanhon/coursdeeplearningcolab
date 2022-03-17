@@ -65,7 +65,7 @@ class MyAutoencoder(torch.nn.Module):
         x = torch.nn.functional.max_pool2d(self.conv2(x), kernel_size=2, stride=2)
         x = x.view(x.shape[0], 64 * 7 * 7)
 
-        code = torch.nn.functional.sigmoid(self.l1(x) * 100)
+        code = torch.nn.functional.sigmoid(self.l1(x) * 100) * 10
 
         x = torch.nn.functional.leaky_relu(self.d1(code))
         x = torch.nn.functional.relu(self.d2(x))
@@ -115,7 +115,7 @@ L1, nb = compute_L1(testloader, net)
 print("test L1", L1 / nb)
 
 colors = [
-    "fff100",
+    "#fff100",
     "#ff8c00",
     "#e81123",
     "#ec008c",
@@ -129,15 +129,19 @@ colors = [
 
 import matplotlib.pyplot as plt
 
-for x, y in testloader:
-    x = x.cuda()
-    _, code = net(x)
-    print(code.shape)
+with torch.no_grad():
+    for x, y in testloader:
+        x = x.cuda()
+        _, code = net(x)
+        code = code.cpu().numpy()
+        code *= 100
 
-    C = [colors[y[i]] for i in range(128)]
+        C = [colors[y[i]] for i in range(128)]
 
-    fig = plt.figure()
-    ax = fig.add_subplot(11)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
-    ax.scatter(code, c=C / 255.0)
-    plt.show()
+        ax.scatter(code[:, 0], code[:, 1], c=C)
+        plt.show()
+
+        quit()
