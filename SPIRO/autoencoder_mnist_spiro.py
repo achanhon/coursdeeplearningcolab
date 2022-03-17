@@ -113,3 +113,31 @@ for epoch in range(8):
 print("eval model")
 L1, nb = compute_L1(testloader, net)
 print("test L1", L1 / nb)
+
+colors = [
+    "fff100",
+    "#ff8c00",
+    "#e81123",
+    "#ec008c",
+    "#68217a",
+    "#00188f",
+    "#00bcf2",
+    "#00b294",
+    "#009e49",
+    "#bad80a",
+]
+
+import matplotlib.pyplot as plt
+
+for x, y in testloader:
+    x = x.cuda()
+    _, code = net(x)
+    print(code.shape)
+
+    C = [colors[y[i]] for i in range(128)]
+
+    fig = plt.figure()
+    ax = fig.add_subplot(11)
+
+    ax.scatter(code, c=C / 255.0)
+    plt.show()

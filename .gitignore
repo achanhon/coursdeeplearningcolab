@@ -8,3 +8,12 @@
 /SPIRO/build/MNIST/raw/train-images-idx3-ubyte.gz
 /SPIRO/build/MNIST/raw/train-labels-idx1-ubyte
 /SPIRO/build/MNIST/raw/train-labels-idx1-ubyte.gz
+/SPIRO/build/cifar-10-batches-py/batches.meta
+/SPIRO/build/cifar-10-batches-py/data_batch_1
+/SPIRO/build/cifar-10-batches-py/data_batch_2
+/SPIRO/build/cifar-10-batches-py/data_batch_3
+/SPIRO/build/cifar-10-batches-py/data_batch_4
+/SPIRO/build/cifar-10-batches-py/data_batch_5
+/SPIRO/build/cifar-10-batches-py/readme.html
+/SPIRO/build/cifar-10-batches-py/test_batch
+/SPIRO/build/cifar-10-python.tar.gz
