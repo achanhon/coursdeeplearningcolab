@@ -100,4 +100,4 @@ for i in range(x.shape[0]):
         x[i][1] = 1  # bon - on met l'image en vert
     else:
         x[i][0] = 1  # pas bon - on met l'image en rouge
-save_image(x, "visu.png")
+torch.save_image(x, "visu.png")
