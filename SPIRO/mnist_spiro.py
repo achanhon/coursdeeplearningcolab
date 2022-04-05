@@ -72,7 +72,7 @@ trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=128, shuffle=True, num_workers=2
 )
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=128, shuffle=True, num_workers=2
+    testset, batch_size=256, shuffle=True, num_workers=2
 )
 
 print("finetune the model on the data")
@@ -85,3 +85,19 @@ for epoch in range(8):
 print("eval model")
 nbok, nb = compute_accuracy(testloader, net)
 print("test accuracy", nbok / nb)
+
+
+print("show example")
+x, y = next(iter(testloader))
+with torch.no_grad():
+    z = net(x.cuda())
+    _, z = z.max(1)
+z = z.cpu()
+
+x = torch.cat([x, x, x], dim=1)  # gray to RGB
+for i in range(x.shape[0]):
+    if z[i] == y[i]:
+        x[i][1] = 1  # bon - on met l'image en vert
+    else:
+        x[i][0] = 1  # pas bon - on met l'image en rouge
+save_image(x, "visu.png")
