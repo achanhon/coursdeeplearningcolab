@@ -94,12 +94,11 @@ with torch.no_grad():
     _, z = z.max(1)
 z = z.cpu()
 
-x = torch.cat([x, x, x], dim=1)  # gray to RGB
 for i in range(x.shape[0]):
     if z[i] == y[i]:
         x[i, 1, :, :] = 1  # bon - on met l'image en vert
     else:
         x[i, 0, :, :] = 1  # pas bon - on met l'image en rouge
 
-visu = torchvision.utils.make_grid(x)
-torch.utils.save_image(visu, "visu.png")
+visu = torchvision.utils.make_grid(x, nrow=16)
+torchvision.utils.save_image(visu, "visu.png")
