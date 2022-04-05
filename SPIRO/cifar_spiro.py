@@ -107,4 +107,4 @@ for i in range(x.shape[0]):
         x[i, 0, :, -2:] = 1
 
 visu = torchvision.utils.make_grid(x, nrow=16)
-torchvision.utils.save_image(visu, "visu.png")
+torchvision.utils.save_image(visu, "build/visu.png")
