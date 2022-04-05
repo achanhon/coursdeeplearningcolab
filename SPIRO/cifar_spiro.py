@@ -96,9 +96,15 @@ z = z.cpu()
 
 for i in range(x.shape[0]):
     if z[i] == y[i]:
-        x[i, 1, :, :] = 1  # bon - on met l'image en vert
+        x[i, 1, 0:2, :] = 1  # bon - on met l'image en vert
+        x[i, 1, :, 0:2] = 1
+        x[i, 1, -2:, :] = 1
+        x[i, 1, :, -2:] = 1
     else:
-        x[i, 0, :, :] = 1  # pas bon - on met l'image en rouge
+        x[i, 0, 0:2, :] = 1  # pas bon - on met l'image en rouge
+        x[i, 0, :, 0:2] = 1
+        x[i, 0, -2:, :] = 1
+        x[i, 0, :, -2:] = 1
 
 visu = torchvision.utils.make_grid(x, nrow=16)
 torchvision.utils.save_image(visu, "visu.png")
