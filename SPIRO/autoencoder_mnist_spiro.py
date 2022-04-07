@@ -48,32 +48,44 @@ class MyAutoencoder(torch.nn.Module):
         super(MyAutoencoder, self).__init__()
         self.conv1 = torch.nn.Conv2d(1, 16, kernel_size=5, padding=2)
         self.conv2 = torch.nn.Conv2d(16, 64, kernel_size=5, padding=2)
+        self.conv3 = torch.nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.conv4 = torch.nn.Conv2d(128, 256, kernel_size=3, padding=1)
+        self.conv5 = torch.nn.Conv2d(256, 64, kernel_size=1, padding=0)
         self.l1 = torch.nn.Linear(64 * 7 * 7, 2)
 
         self.d1 = torch.nn.Linear(2, 512)
         self.d2 = torch.nn.Linear(512, 512)
-        self.d3 = torch.nn.Linear(512, 7 * 7 * 64)
-        self.convd1 = torch.nn.Conv2d(64, 16, kernel_size=5, padding=2)
-        self.convd2 = torch.nn.Conv2d(16, 1, kernel_size=5, padding=2)
+        self.d3 = torch.nn.Linear(512, 512)
+        self.d4 = torch.nn.Linear(512, 512)
+        self.d5 = torch.nn.Linear(512, 512)
+        self.d6 = torch.nn.Linear(512, 7 * 7 * 64)
 
-        self.tmp = torch.nn.AdaptiveAvgPool2d((14, 14))
-        self.tmp2 = torch.nn.AdaptiveAvgPool2d((28, 28))
+        self.tmp = torch.nn.AdaptiveAvgPool2d((28, 28))
+        self.convf = torch.nn.Conv2d(64, 1, kernel_size=5, padding=2)
 
     def forward(self, x):
         x = torch.nn.functional.leaky_relu(self.conv1(x))
         x = torch.nn.functional.max_pool2d(x, kernel_size=2, stride=2)
-        x = torch.nn.functional.max_pool2d(self.conv2(x), kernel_size=2, stride=2)
-        x = x.view(x.shape[0], 64 * 7 * 7)
+        x = torch.nn.functional.leaky_relu(self.conv2(x))
+        x = torch.nn.functional.max_pool2d(x, kernel_size=2, stride=2)
+        x = torch.nn.functional.leaky_relu(self.conv3(x))
+        x = torch.nn.functional.leaky_relu(self.conv4(x))
+        x = torch.nn.functional.leaky_relu(self.conv5(x))
 
+        x = x.view(x.shape[0], 64 * 7 * 7)
         code = torch.nn.functional.sigmoid(self.l1(x) * 100) * 10
 
         x = torch.nn.functional.leaky_relu(self.d1(code))
-        x = torch.nn.functional.relu(self.d2(x))
-        x = torch.nn.functional.relu(self.d3(x))
-        x = x.view(x.shape[0], 64, 7, 7)
+        x = torch.nn.functional.leaky_relu(self.d2(x))
+        x = torch.nn.functional.leaky_relu(self.d3(x))
+        x = torch.nn.functional.leaky_relu(self.d4(x))
+        x = torch.nn.functional.leaky_relu(self.d5(x))
+        x = torch.nn.functional.leaky_relu(self.d6(x))
 
-        x = torch.nn.functional.leaky_relu(self.convd1(self.tmp(x)))
-        x = torch.nn.functional.sigmoid(self.convd2(self.tmp2(x)) * 100)
+        x = x.view(x.shape[0], 64, 7, 7)
+        x = self.tmp(x)
+        x = self.convf(x)
+        x = torch.nn.functional.sigmoid(x * 100)
 
         return x, code
 
@@ -107,7 +119,7 @@ print("train the model on the data")
 
 for epoch in range(8):
     print("epoch", epoch)
-    L1, nb = training_epoch(trainloader, net, 0.00001)
+    L1, nb = training_epoch(trainloader, net, 0.0001)
     print("train L1", L1 / nb)
 
 print("eval model")
