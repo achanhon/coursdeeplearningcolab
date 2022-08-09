@@ -64,7 +64,7 @@ classes = (
 
 # Model
 print("==> Building model..")
-net = torchvision.models.vgg16()
+net = torchvision.models.vgg16(pretrained=True)
 net = net.to(device)
 if device == "cuda":
     net = torch.nn.DataParallel(net)
