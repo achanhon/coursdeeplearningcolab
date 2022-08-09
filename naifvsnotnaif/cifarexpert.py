@@ -71,7 +71,7 @@ if device == "cuda":
     cudnn.benchmark = True
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(net.parameters(), lr=0.001, momentum=0.9, weight_decay=5e-4)
+optimizer = optim.Adam(net.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
 
